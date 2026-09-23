@@ -70,6 +70,8 @@ def ADCCal_CSV_to_ROOT(
   g_Vin_PS.SetMarkerStyle(8)
   g_Vin_PS.SetMarkerColor(ROOT.kBlue)
   g_Vin_PS.SetLineColor(ROOT.kBlue)
+  g_Vin_PS.SetMinimum(0.0)
+  g_Vin_PS.SetMaximum(3.0)
 
   g_Vin_Chip.SetMarkerStyle(22)
   g_Vin_Chip.SetMarkerSize(1.4)
@@ -81,6 +83,10 @@ def ADCCal_CSV_to_ROOT(
   c_Vin = ROOT.TCanvas("c_Vin_Chip{0}".format(chip), "c_Vin_Chip{0}".format(chip), 800, 800)
   g_Vin_PS.Draw("ALP")
   g_Vin_Chip.Draw("LP SAME")
+  c_Vin.Update()
+  g_Vin_PS.GetYaxis().SetRangeUser(0.0, 3.0)
+  c_Vin.Modified()
+  c_Vin.Update()
 
   legend = ROOT.TLegend(0.65, 0.15, 0.88, 0.3)
   legend.AddEntry(g_Vin_PS, "Power Supply", "lp")
@@ -106,6 +112,11 @@ def ADCCal_CSV_to_ROOT(
   if not file.GetDirectory(chipPath):
     file.mkdir(chipPath)
   file.cd(chipPath)
+  g_Vin_Chip.Write(vinName, ROOT.TObject.kOverwrite)
+  g_Temp_Chip.Write(tempName, ROOT.TObject.kOverwrite)
+  g_Vin_PS.Write("g_Vin_PowerSupply_Chip{0}".format(chip), ROOT.TObject.kOverwrite)
   c_Vin.Write("c_Vin", ROOT.TObject.kOverwrite)
   c_Temp.Write("c_Temperature", ROOT.TObject.kOverwrite)
+  c_Vin.Write("{0}_Canvas".format(vinName), ROOT.TObject.kOverwrite)
+  c_Temp.Write("{0}_Canvas".format(tempName), ROOT.TObject.kOverwrite)
   file.Close()
